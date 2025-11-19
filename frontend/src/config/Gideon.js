@@ -1,4 +1,4 @@
-const apiKey = "AIzaSyBELapTPGMg4zmrrD7PUgwPovzuYx4-WbA";
+const apiKey = "";
 
 const { GoogleGenAI } = require('@google/genai');
 const mime = require('mime');
