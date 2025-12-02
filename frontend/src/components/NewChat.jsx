@@ -2,7 +2,7 @@ import "./Style.css"
 import { FaEdit } from "react-icons/fa";
 
 
-const NewChat = ({ onClick = () => {}, compact = false }) => {
+const NewChat = ({ onClick , compact = false }) => {
 
   if(compact){
     return(
@@ -10,7 +10,7 @@ const NewChat = ({ onClick = () => {}, compact = false }) => {
       onClick={onClick}
       aria-label="New Chat"
       title="New Chat">
-        <FaEdit style={{color:"black", fontSize:"25px"}}/>
+        <FaEdit style={{ fontSize:"25px" }}/>
       </button>
     )
   }
@@ -18,7 +18,7 @@ const NewChat = ({ onClick = () => {}, compact = false }) => {
   return (
     <div>
         <button className="new-chat" onClick={onClick}>
-            <FaEdit style={{color:"black", fontSize:"25px"}}/>New Chat
+            <FaEdit style={{ fontSize:"25px" }}/>New Chat
         </button>
     </div>
   )

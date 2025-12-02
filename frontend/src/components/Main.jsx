@@ -5,6 +5,7 @@ import Cards from './Cards'
 import { FaRegMessage, FaRegCompass, FaRegLightbulb, FaCode, FaMicrophone } from "react-icons/fa6";
 import { IoMdSend } from "react-icons/io";
 import { GoFileMedia } from "react-icons/go";
+import { CgProfile } from "react-icons/cg";
 
 const Main = () => {
     const cardData = [
@@ -20,6 +21,7 @@ const Main = () => {
             <span>Gideon <span className='version'>1.0</span></span>
             <img src={assets.user_icon} alt="" />
         </div>
+        
         <div className="main-container">
             <div className="greet">
                 <p><span>Hello, Barry !</span></p>

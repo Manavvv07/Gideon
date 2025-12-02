@@ -1,6 +1,6 @@
 import "./Style.css"
 import RecentChats from "./RecentChats"
-import {assets} from "../assets/assets"
+import ThemeToggle from "./ThemeToggle"
 import { useState } from "react"
 import NewChat from "./NewChat"
 import { FaQuestionCircle, FaInfoCircle } from "react-icons/fa";
@@ -25,13 +25,20 @@ const Sidebar = () => {
         setCurrentChatTitle("New Chat")
         console.log("New Chat Handled")
     }
-  return (
-    <div className='sidebar'>
-        <div className="top">
-            <TiThMenu onClick={() => setExtended(prev => !prev)} className="menu"/>
 
-            {extended ?<NewChat onClick={handleNewChat}/>: (
-            <NewChat compact onClick={() => {handleNewChat}} />
+    const handleCompactNew = () => {
+        handleNewChat();
+    }
+
+    const [currentTheme, setCurrentTheme] = useState("light");
+
+  return (
+    <div className={`sidebar ${extended ? 'expanded' : 'collapsed'}`}>
+        <div className="top">
+            <TiThMenu onClick={() => setExtended(prev => !prev)} className="menu" />
+
+            {extended ?<NewChat onClick={handleNewChat} />: (
+            <NewChat compact onClick={() => {handleCompactNew}}/>
             )}
             <div className="recent">
                 {extended ? <p className="recent-title">Recent</p> : null}
@@ -42,6 +49,10 @@ const Sidebar = () => {
             </div>
         </div>
         <div className="bottom">
+            <div className="theme-name">
+                <ThemeToggle className="icon" onThemeChange={setCurrentTheme} />
+                {extended ? <p className="theme-name">{currentTheme === "dark" ? "Dark Mode" : "Light Mode"}</p> : null}
+            </div>
             <div className="bottom-item recent-entry">
                 <FaQuestionCircle className="icon"/>
                 {extended ? <p>Help</p> : null}
@@ -54,10 +65,10 @@ const Sidebar = () => {
                 <FaGear className="icon"/>
                 {extended ? <p>Settings</p> : null}     
             </div>
+            
         </div>
     </div>
   )
 }
 
 export default Sidebar
-
