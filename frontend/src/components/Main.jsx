@@ -1,11 +1,15 @@
 
 import { assets } from '../assets/assets'
 import "./Style.css"
-import Cards from './Cards'
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import { FaRegMessage, FaRegCompass, FaRegLightbulb, FaCode, FaMicrophone } from "react-icons/fa6";
 import { IoMdSend } from "react-icons/io";
 import { GoFileMedia } from "react-icons/go";
-import { CgProfile } from "react-icons/cg";
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import Greeting from './Greeting';
+import Answer from './Answer';
 
 const Main = () => {
     const cardData = [
@@ -13,8 +17,52 @@ const Main = () => {
     {text: "Help in brainstorming business ideas", icon: <FaRegMessage />},
     {text: "Summarize this topic for a Group discussion", icon: <FaRegLightbulb />},
     {text: "Increase the readability of given code", icon: <FaCode/> }
-
 ]
+
+const [question, setQuestion] = useState("");
+const[answer, setAnswer] = useState("")
+const [triggerFetch, setTriggerFetch] = useState(false);
+const [loading, setLoading] = useState(false);
+
+useEffect(() => {
+    if(triggerFetch && question.trim() !== ""){
+        const fetchData = async () => {
+            setLoading(true);
+
+            try{
+                const response = await axios({
+                 url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyArGsNRupr1Z3e-UYWesYU3VF0R6L-wDdE",
+                method: "post",
+                data: {
+                "contents": [{"parts": [{"text": question}]}]
+                }
+                });
+                setAnswer(response["data"]["candidates"][0]["content"]["parts"][0]["text"]);
+            } catch (error) {
+                console.error("error: ", error);
+                setAnswer("Sorry, I encontered an error while fetching the answer.")
+            } finally {
+                setLoading(false);
+                setTriggerFetch(false);
+            }
+        };
+        fetchData();
+    }
+}, [triggerFetch, question])
+
+const handleSendQuestion = () => {
+    if(!loading && question.trim() !== ""){
+        setTriggerFetch(true);
+    }
+}
+
+const LoadingSkeleton = () => (
+    <div className="skeleton-container" style={{display: 'block', width: '100%', minHeight: '100px', boxSizing: 'border-box' }}>
+        <Skeleton count={5} height={18} style={{marginBottom: 15}}/>
+        <Skeleton count={1} width='70%' height={18}/>
+    </div>
+);
+
   return (
     <div className='main'>
         <div className="nav">
@@ -23,24 +71,24 @@ const Main = () => {
         </div>
         
         <div className="main-container">
-            <div className="greet">
-                <p><span>Hello, Barry !</span></p>
-                <p>How can i help you today ?</p>
-        </div>
-           
-        <div className="cards">
-            {cardData?.map((item, index) => (
-              <Cards key={index} text={item?.text} icon={item.icon} />
-            ))}
-        </div>
+            {loading ? (
+                <LoadingSkeleton/>
+            ) : answer ? (
+                <Answer text={answer}/>
+            ) : (
+                <Greeting cardData={cardData}/>
+            )}
+            
 
             <div className="main-bottom">
                 <div className="search-box">
-                    <input type="text" placeholder='Ask Gideon'/>
+                    <input value={question} onChange={(e) => setQuestion(e.target.value)} type="text" placeholder='Ask Gideon'/>
                     <div>
                     <GoFileMedia className='prompt-icon'/>
                     <FaMicrophone className='prompt-icon'/>
-                    <IoMdSend className='prompt-icon'/>
+                    <button onClick={handleSendQuestion} className='send-button'>
+                        <IoMdSend className='prompt-icon'/>
+                    </button>
                     </div>
                 </div>
                 <p className="bottom-info">

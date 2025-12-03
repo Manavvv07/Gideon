@@ -38,7 +38,7 @@ const Sidebar = () => {
             <TiThMenu onClick={() => setExtended(prev => !prev)} className="menu" />
 
             {extended ?<NewChat onClick={handleNewChat} />: (
-            <NewChat compact onClick={() => {handleCompactNew}}/>
+            <NewChat compact onClick={handleCompactNew}/>
             )}
             <div className="recent">
                 {extended ? <p className="recent-title">Recent</p> : null}

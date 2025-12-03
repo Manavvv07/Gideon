@@ -7,7 +7,6 @@ const ThemeToggle = ({ className = "", onThemeChange }) => {
   const [theme, toggle] = useDarkMode();
   const isDark = theme === "dark";
 
-  // Notify parent AFTER theme changes (safe)
   useEffect(() => {
     if (onThemeChange) {
       onThemeChange(theme);
