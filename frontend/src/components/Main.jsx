@@ -31,13 +31,14 @@ useEffect(() => {
 
             try{
                 const response = await axios({
-                 url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyArGsNRupr1Z3e-UYWesYU3VF0R6L-wDdE",
+                 url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
                 method: "post",
                 data: {
                 "contents": [{"parts": [{"text": question}]}]
                 }
                 });
                 setAnswer(response["data"]["candidates"][0]["content"]["parts"][0]["text"]);
+                setQuestion("");
             } catch (error) {
                 console.error("error: ", error);
                 setAnswer("Sorry, I encontered an error while fetching the answer.")
@@ -56,8 +57,14 @@ const handleSendQuestion = () => {
     }
 }
 
+const handleKeyDown = (e) => {
+    if(e.key === 'Enter'){
+        handleSendQuestion();
+    }
+}
+
 const LoadingSkeleton = () => (
-    <div className="skeleton-container" style={{display: 'block', width: '100%', minHeight: '100px', boxSizing: 'border-box' }}>
+    <div className="answer-container" style={{display: 'block', width: '100%', minHeight: '100px', boxSizing: 'border-box' }}>
         <Skeleton count={5} height={18} style={{marginBottom: 15}}/>
         <Skeleton count={1} width='70%' height={18}/>
     </div>
@@ -82,7 +89,7 @@ const LoadingSkeleton = () => (
 
             <div className="main-bottom">
                 <div className="search-box">
-                    <input value={question} onChange={(e) => setQuestion(e.target.value)} type="text" placeholder='Ask Gideon'/>
+                    <input value={question} onChange={(e) => setQuestion(e.target.value)} onKeyDown={handleKeyDown} type="text" placeholder='Ask Gideon'/>
                     <div>
                     <GoFileMedia className='prompt-icon'/>
                     <FaMicrophone className='prompt-icon'/>

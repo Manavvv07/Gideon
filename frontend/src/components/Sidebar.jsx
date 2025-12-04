@@ -6,9 +6,27 @@ import NewChat from "./NewChat"
 import { FaQuestionCircle, FaInfoCircle } from "react-icons/fa";
 import { TiThMenu } from "react-icons/ti";
 import { FaGear } from "react-icons/fa6";
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import firebase from "firebase/compat/app"
 
 const Sidebar = () => {
     const [extended, setExtended] = useState(false)
+
+    const firebaseConfig = {
+    apiKey: "AIzaSyCnDWcFeSFSKn5BsrVwdIEqPjxihO5tY7w",
+    authDomain: "gideon-db8ab.firebaseapp.com",
+    projectId: "gideon-db8ab",
+    storageBucket: "gideon-db8ab.firebasestorage.app",
+    messagingSenderId: "114667605820",
+    appId: "1:114667605820:web:772f48d0ae1025c9615839",
+    measurementId: "G-XDFW4N7TSZ"
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = firebase.auth();
+    const firestore = firebase.firestore();
 
     const [recentChats, setRecentChats] = useState([
         {id: 1, text: "what is react..."},
