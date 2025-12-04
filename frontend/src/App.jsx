@@ -5,7 +5,6 @@ import useDarkMode from "./Hooks/UseDarkMode";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Auth from "./components/Auth";
 
-// Create a layout component for the authenticated view
 const Dashboard = () => {
   return (
     <>
