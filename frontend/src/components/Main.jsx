@@ -1,110 +1,148 @@
-
-import { assets } from '../assets/assets'
 import "./Style.css"
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-import { FaRegMessage, FaRegCompass, FaRegLightbulb, FaCode, FaMicrophone } from "react-icons/fa6";
+import { FaRegMessage, FaRegCompass, FaRegLightbulb, FaCode, FaMicrophone, FaRegCircleUser, FaGem } from "react-icons/fa6";
 import { IoMdSend } from "react-icons/io";
 import { GoFileMedia } from "react-icons/go";
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useContext } from 'react';
 import Greeting from './Greeting';
 import Answer from './Answer';
+import { useNavigate } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
+import { auth } from '../config/firebase';
+import { Context } from '../context/Context';
 
 const Main = () => {
+
+    const navigate = useNavigate();
+    
+    const { 
+        onSent, 
+        recentPrompt, 
+        showResult, 
+        loading, 
+        resultData, 
+        setInput, 
+        input,
+        user 
+    } = useContext(Context);
+
     const cardData = [
-    {text: "Suggest beautiful places to see on a trip", icon: <FaRegCompass  />},
-    {text: "Help in brainstorming business ideas", icon: <FaRegMessage />},
-    {text: "Summarize this topic for a Group discussion", icon: <FaRegLightbulb />},
-    {text: "Increase the readability of given code", icon: <FaCode/> }
-]
+        {text: "Suggest beautiful places to see on a trip", icon: <FaRegCompass  />},
+        {text: "Help in brainstorming business ideas", icon: <FaRegMessage />},
+        {text: "Summarize this topic for a Group discussion", icon: <FaRegLightbulb />},
+        {text: "Increase the readability of given code", icon: <FaCode/> }
+    ]
 
-const [question, setQuestion] = useState("");
-const[answer, setAnswer] = useState("")
-const [triggerFetch, setTriggerFetch] = useState(false);
-const [loading, setLoading] = useState(false);
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            navigate('/login');
+        } catch (error) {
+            console.error("Error signing out: ", error);
+        }
+    };
 
-useEffect(() => {
-    if(triggerFetch && question.trim() !== ""){
-        const fetchData = async () => {
-            setLoading(true);
-
-            try{
-                const response = await axios({
-                 url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
-                method: "post",
-                data: {
-                "contents": [{"parts": [{"text": question}]}]
-                }
-                });
-                setAnswer(response["data"]["candidates"][0]["content"]["parts"][0]["text"]);
-                setQuestion("");
-            } catch (error) {
-                console.error("error: ", error);
-                setAnswer("Sorry, I encontered an error while fetching the answer.")
-            } finally {
-                setLoading(false);
-                setTriggerFetch(false);
-            }
-        };
-        fetchData();
+    const handleSendQuestion = () => {
+        if(input && input.trim() !== ""){
+            onSent(); 
+        }
     }
-}, [triggerFetch, question])
 
-const handleSendQuestion = () => {
-    if(!loading && question.trim() !== ""){
-        setTriggerFetch(true);
+    const handleKeyDown = (e) => {
+        if(e.key === 'Enter'){
+            handleSendQuestion();
+        }
     }
-}
 
-const handleKeyDown = (e) => {
-    if(e.key === 'Enter'){
-        handleSendQuestion();
+    const handleCardClick = (promptText) => {
+        setInput(promptText);
+        onSent(promptText);
     }
-}
 
-const LoadingSkeleton = () => (
-    <div className="answer-container" style={{display: 'block', width: '100%', minHeight: '100px', boxSizing: 'border-box' }}>
-        <Skeleton count={5} height={18} style={{marginBottom: 15}}/>
-        <Skeleton count={1} width='70%' height={18}/>
-    </div>
-);
-
-  return (
-    <div className='main'>
-        <div className="nav">
-            <span>Gideon <span className='version'>1.0</span></span>
-            <img src={assets.user_icon} alt="" />
+    const LoadingSkeleton = () => (
+        <div className="answer-container" style={{display: 'block', width: '100%', minHeight: '100px', boxSizing: 'border-box' }}>
+            <Skeleton count={3} height={18} style={{marginBottom: 10}}/>
+            <Skeleton count={1} width='70%' height={18}/>
         </div>
-        
-        <div className="main-container">
-            {loading ? (
-                <LoadingSkeleton/>
-            ) : answer ? (
-                <Answer text={answer}/>
-            ) : (
-                <Greeting cardData={cardData}/>
-            )}
-            
+    );
 
-            <div className="main-bottom">
-                <div className="search-box">
-                    <input value={question} onChange={(e) => setQuestion(e.target.value)} onKeyDown={handleKeyDown} type="text" placeholder='Ask Gideon'/>
-                    <div>
-                    <GoFileMedia className='prompt-icon'/>
-                    <FaMicrophone className='prompt-icon'/>
-                    <button onClick={handleSendQuestion} className='send-button'>
-                        <IoMdSend className='prompt-icon'/>
-                    </button>
-                    </div>
+    return (
+        <div className='main'>
+            <div className="nav">
+                <span>Gideon <span className='version'>1.0</span></span>
+                <div style={{display: 'flex', alignItems: 'center', gap: '15px'}}>
+                    {user ? (
+                        <button className='login-main' onClick={handleLogout}>Logout</button>
+                    ) : (
+                        <button className='login-main' onClick={() => navigate('/login')}>Login</button>
+                    )}
+                    
+                    {user && user.photoURL ? (
+                        <img 
+                            src={user.photoURL} 
+                            alt="User Icon" 
+                            style={{
+                                width: '40px', 
+                                height: '40px', 
+                                borderRadius: '50%', 
+                                objectFit: 'cover'
+                            }}
+                        />
+                    ) : (
+                        <FaRegCircleUser size={40} style={{color: 'var(--text-primary)'}} />
+                    )}
                 </div>
-                <p className="bottom-info">
-                    Gideon may display inaccurate info, including about people, so double-check its responses.
-                </p>
+            </div>
+            
+            <div className="main-container">
+                {!showResult ? (
+                    <Greeting cardData={cardData} onCardClick={handleCardClick}/>
+                ) : (
+                    <div className='result'>
+                        <div className="result-title">
+                            {user?.photoURL ? (
+                                <img src={user.photoURL} alt="" style={{width:'30px', borderRadius:'50%', marginRight:'10px'}}/>
+                            ) : (
+                                <FaRegCircleUser size={30} style={{marginRight:'10px', color: 'var(--text-primary)'}}/>
+                            )}
+                            <p>{recentPrompt}</p>
+                        </div>
+                        <div className="result-data">
+                            <FaGem size={30} style={{marginRight:'10px', color: 'var(--accent)'}}/>
+                            {loading ? (
+                                <div style={{width:'100%'}}><LoadingSkeleton/></div>
+                            ) : (
+                                <Answer text={resultData}/>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                <div className="main-bottom">
+                    <div className="search-box">
+                        <input 
+                            value={input} 
+                            onChange={(e) => setInput(e.target.value)} 
+                            onKeyDown={handleKeyDown} 
+                            type="text" 
+                            placeholder='Ask Gideon'
+                        />
+                        <div>
+                            <GoFileMedia className='prompt-icon'/>
+                            <FaMicrophone className='prompt-icon'/>
+                            <button onClick={handleSendQuestion} className='send-button'>
+                                <IoMdSend className='prompt-icon'/>
+                            </button>
+                        </div>
+                    </div>
+                    <p className="bottom-info">
+                        Gideon may display inaccurate info, including about people, so double-check its responses.
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
-  )
+    )
 }
 
 export default Main
