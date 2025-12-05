@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from "react";
-import { doc, getDoc, collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, collection, addDoc, serverTimestamp, updateDoc, arrayUnion } from "firebase/firestore";
 import { db, auth } from "../config/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import axios from 'axios';
@@ -13,6 +13,8 @@ const ContextProvider = (props) => {
     const [loading, setLoading] = useState(false);
     const [resultData, setResultData] = useState("");
     const [user, setUser] = useState(null);
+    const [chatId, setChatId] = useState(null);
+    const [messages, setMessages] = useState([])
 
     
     useEffect(() => {
@@ -27,10 +29,12 @@ const ContextProvider = (props) => {
         setResultData("");
         setLoading(true);
         setShowResult(true);
-        let response;
         
         const promptToSend = prompt !== undefined ? prompt : input;
         setRecentPrompt(promptToSend);
+
+        const userMessage = {role: 'user', text: promptToSend};
+        setMessages(prev => [...prev, userMessage])
 
         try {
              const apiResponse = await axios({
@@ -40,16 +44,27 @@ const ContextProvider = (props) => {
                 "contents": [{"parts": [{"text": promptToSend}]}]
                 }
             });
-            response = apiResponse["data"]["candidates"][0]["content"]["parts"][0]["text"];
+            const responseText = apiResponse["data"]["candidates"][0]["content"]["parts"][0]["text"];
+            const modelMessage = {role: 'model', text: responseText};
             
-            setResultData(response);
+            setResultData(responseText);
+            setMessages(prev => [...prev, modelMessage]);
 
             if(user){
-                 await addDoc(collection(db, "users", user.uid, "chats"), {
-                    prompt: promptToSend,
-                    response: response,
-                    timestamp: serverTimestamp()
-                });
+                if(!chatId){
+                    const newChatRef = await addDoc(collection(db, 'users', user.uid, 'chats'), {
+                        title: promptToSend.slice(0, 30) + '...',
+                        messages: [userMessage, modelMessage],
+                        timestamp: serverTimestamp()
+                    });
+                    setChatId(newChatRef.id);
+                }else{
+                    const chatRef = doc(db, 'users', user.uid, 'chats', chatId);
+                    await updateDoc(chatRef, {
+                        messages: arrayUnion(userMessage, modelMessage),
+                        timestamp: serverTimestamp()
+                    })
+                }
             }
 
         } catch (error) {
@@ -88,6 +103,8 @@ const ContextProvider = (props) => {
     const newChat = () => {
         setLoading(false);
         setShowResult(false);
+        setChatId(null);
+        setMessages([]);
     }
 
     const contextValue = {
@@ -101,7 +118,8 @@ const ContextProvider = (props) => {
         setInput,
         newChat,
         loadChat,
-        user
+        user,
+        messages
     }
 
     return (

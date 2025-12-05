@@ -409,8 +409,6 @@ body {
     color: var(--muted);
 }
 
-
-
 .main-container .result .result-title
 {
     display: flex;
@@ -423,6 +421,7 @@ body {
 
 .result-title p{
     margin-right: 20px;
+    margin-top: 40px;
     padding: 12px 16px;
     background-color: var(--surface);
     border-radius: 16px;
@@ -432,6 +431,7 @@ body {
     overflow-y: auto;
     box-sizing: border-box;
 }
+
 
 .answer-container{
     padding: 12px 16px;
@@ -442,10 +442,23 @@ body {
     width: fit-content;
     overflow-y: auto;
     box-sizing: border-box;
-    margin-left: 10%;
-    margin-top:3%;
+    margin-left: 10px;
+    margin-top: px;
+    
 }
 
+.result-data {
+    display: flex;
+    align-items: flex-start; 
+    margin-bottom: 40px;
+}
+
+.result .result-data .gem{
+    margin-right: 5px;
+    color: var(--accent);
+    min-width: 30px;
+    margin-top: 10px;
+}
 
 .answer{
     font-size: 20px;

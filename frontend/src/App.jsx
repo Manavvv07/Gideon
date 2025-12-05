@@ -26,11 +26,11 @@ const App = () => {
   const router = createBrowserRouter([
     {
       path: '/',
-      element: <Dashboard />
+      element: <Auth />
     },
     {
-      path: '/login',
-      element: <Auth />
+      path: '/dashboard',
+      element: <Dashboard />
     }
   ]);
 

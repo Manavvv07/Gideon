@@ -32,7 +32,7 @@ const Auth = () => {
     const handleGoogleSignIn = async () => {
         try {
             await signInWithPopup(auth, googleProvider);
-            navigate('/');
+            navigate('/dashboard');
         } catch (err) {
             setError(err.message);
         }

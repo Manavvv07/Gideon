@@ -4,7 +4,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import { FaRegMessage, FaRegCompass, FaRegLightbulb, FaCode, FaMicrophone, FaRegCircleUser, FaGem } from "react-icons/fa6";
 import { IoMdSend } from "react-icons/io";
 import { GoFileMedia } from "react-icons/go";
-import { useContext } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import Greeting from './Greeting';
 import Answer from './Answer';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +15,7 @@ import { Context } from '../context/Context';
 const Main = () => {
 
     const navigate = useNavigate();
+    const messagesEndRef = useRef(null);
     
     const { 
         onSent, 
@@ -24,20 +25,29 @@ const Main = () => {
         resultData, 
         setInput, 
         input,
-        user 
+        user,
+        messages
     } = useContext(Context);
 
     const cardData = [
         {text: "Suggest beautiful places to see on a trip", icon: <FaRegCompass  />},
-        {text: "Help in brainstorming business ideas", icon: <FaRegMessage />},
-        {text: "Summarize this topic for a Group discussion", icon: <FaRegLightbulb />},
-        {text: "Increase the readability of given code", icon: <FaCode/> }
+        {text: "Help in brainstorming business ideas", icon: <FaRegLightbulb />},
+        {text: "Suggest a topic for a Group discussion", icon: <FaRegMessage />},
+        {text: "Write a basic code in Java to explain OOP ", icon: <FaCode/> }
     ]
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages, loading]);
 
     const handleLogout = async () => {
         try {
             await signOut(auth);
-            navigate('/login');
+            navigate('/');
         } catch (error) {
             console.error("Error signing out: ", error);
         }
@@ -77,7 +87,7 @@ const Main = () => {
                     ) : (
                         <button className='login-main' onClick={() => navigate('/login')}>Login</button>
                     )}
-                    
+                
                     {user && user.photoURL ? (
                         <img 
                             src={user.photoURL} 
@@ -101,23 +111,33 @@ const Main = () => {
                     <Greeting cardData={cardData} onCardClick={handleCardClick}/>
                 ) : (
                     <div className='result'>
-                        <div className="result-title">
-                            <p>{recentPrompt}</p>
-                            {user?.photoURL ? (
-                                <img src={user.photoURL} alt="" style={{width:'30px', borderRadius:'50%', marginRight:'10px'}}/>
-                            ) : (
-                                <FaRegCircleUser size={30} style={{marginRight:'10px', color: 'var(--text-primary)'}}/>
-                            )}
-                            
-                        </div>
-                        <div className="result-data">
-                            <FaGem size={30} style={{marginRight: '-75px', marginBottom: '5px', color: 'var(--accent)'}}/>
-                            {loading ? (
+                        {messages.map((msg, index) => (
+                            <div key={index} className="message-block">
+                                {msg.role === "user" ? (
+                                    <div className="result-title">
+                                        {user?.photoURL ? (
+                                            <img src={user.photoURL} alt="" style={{width:'30px', borderRadius:'50%', marginRight:'10px', marginTop: '40px'}}/>
+                                        ) : (
+                                            <FaRegCircleUser size={30} style={{marginRight:'10px', color: 'var(--text-primary)'}}/>
+                                        )}
+                                        <p>{msg.text}</p>
+                                    </div>
+                                ) : (
+                                    <div className="result-data">
+                                        <FaGem className="gem" size={30} />
+                                        <Answer text={msg.text}/>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                        
+                        {loading && (
+                            <div className="result-data">
+                                <FaGem className="gem" size={30} />
                                 <div style={{width:'100%'}}><LoadingSkeleton/></div>
-                            ) : (
-                                <Answer text={resultData}/>
-                            )}
-                        </div>
+                            </div>
+                        )}
+                        <div ref={messagesEndRef} />
                     </div>
                 )}
 

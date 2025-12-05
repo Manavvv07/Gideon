@@ -36,7 +36,7 @@ const Sidebar = () => {
             const unsubscribe = onSnapshot(q, (snapshot) => {
                 const chats = snapshot.docs.map(doc => ({
                     id: doc.id,
-                    text: doc.data().prompt
+                    text: doc.data().title
                 }));
                 setRecentChats(chats);
             });
