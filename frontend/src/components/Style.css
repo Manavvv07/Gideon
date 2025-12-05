@@ -511,6 +511,11 @@ body {
     text-align: center;
     color: var(--text-primary);
     margin-bottom: 25px;
+    background: -webkit-linear-gradient(16deg, var(--accent), #ff5446);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+
 }
 
 .form-content input {
@@ -531,7 +536,10 @@ body {
 }
 
 .submit-btn {
-    width: 100%;
+    width: 50%;
+    display: block;
+    flex-direction: column;
+    align-items: center;
     padding: 12px;
     background-color: var(--text-primary);
     color: var(--bg);
@@ -539,8 +547,9 @@ body {
     border-radius: 50px;
     font-size: 16px;
     cursor: pointer;
-    margin-top: 10px;
     transition: opacity 0.2s;
+    margin: 10px auto;
+    margin-top: 30px;
 }
 
 .submit-btn:hover {
@@ -548,7 +557,7 @@ body {
 }
 
 .google-btn {
-    width: 100%;
+    width: 50%;
     padding: 12px;
     background-color: var(--bg);
     border: 1px solid var(--muted);
@@ -561,6 +570,7 @@ body {
     justify-content: center;
     gap: 10px;
     transition: background-color 0.2s;
+    margin: 10px auto;
 }
 
 .google-btn:hover {

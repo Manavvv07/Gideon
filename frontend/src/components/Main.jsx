@@ -86,7 +86,8 @@ const Main = () => {
                                 width: '40px', 
                                 height: '40px', 
                                 borderRadius: '50%', 
-                                objectFit: 'cover'
+                                objectFit: 'cover',
+                                cursor: 'pointer'
                             }}
                         />
                     ) : (
