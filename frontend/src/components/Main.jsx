@@ -102,15 +102,16 @@ const Main = () => {
                 ) : (
                     <div className='result'>
                         <div className="result-title">
+                            <p>{recentPrompt}</p>
                             {user?.photoURL ? (
                                 <img src={user.photoURL} alt="" style={{width:'30px', borderRadius:'50%', marginRight:'10px'}}/>
                             ) : (
                                 <FaRegCircleUser size={30} style={{marginRight:'10px', color: 'var(--text-primary)'}}/>
                             )}
-                            <p>{recentPrompt}</p>
+                            
                         </div>
                         <div className="result-data">
-                            <FaGem size={30} style={{marginRight:'10px', color: 'var(--accent)'}}/>
+                            <FaGem size={30} style={{marginRight: '-75px', marginBottom: '5px', color: 'var(--accent)'}}/>
                             {loading ? (
                                 <div style={{width:'100%'}}><LoadingSkeleton/></div>
                             ) : (
