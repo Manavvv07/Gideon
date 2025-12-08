@@ -31,21 +31,43 @@ const ContextProvider = (props) => {
         setShowResult(true);
         
         const promptToSend = prompt !== undefined ? prompt : input;
+        setInput(""); // Clears input immediately
         setRecentPrompt(promptToSend);
 
         const userMessage = {role: 'user', text: promptToSend};
         setMessages(prev => [...prev, userMessage])
 
         try {
-             const apiResponse = await axios({
-                 url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
+            const history = messages.map(msg => ({
+                role: msg.role === 'model' ? 'assistant' : 'user',
+                content: msg.text,
+                reasoning_details: msg.reasoning_details || undefined 
+            }));
+
+            history.push({ role: 'user', content: promptToSend });
+
+            const apiResponse = await axios({
+                url: "https://openrouter.ai/api/v1/chat/completions",
                 method: "post",
+                headers: {
+                    "Authorization": `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
+                    "Content-Type": "application/json"
+                },
                 data: {
-                "contents": [{"parts": [{"text": promptToSend}]}]
+                    "model": "nvidia/nemotron-nano-12b-v2-vl:free",
+                    "messages": history,
+                    "reasoning": { "enabled": true }
                 }
             });
-            const responseText = apiResponse["data"]["candidates"][0]["content"]["parts"][0]["text"];
-            const modelMessage = {role: 'model', text: responseText};
+
+            const responseMessage = apiResponse.data.choices[0].message;
+            const responseText = responseMessage.content;
+            
+            const modelMessage = {
+                role: 'model', 
+                text: responseText,
+                reasoning_details: responseMessage.reasoning_details
+            };
             
             setResultData(responseText);
             setMessages(prev => [...prev, modelMessage]);
@@ -54,7 +76,7 @@ const ContextProvider = (props) => {
                 if(!chatId){
                     const newChatRef = await addDoc(collection(db, 'users', user.uid, 'chats'), {
                         title: promptToSend.slice(0, 30) + '...',
-                        messages: [userMessage, modelMessage],
+                        messages: [userMessage, modelMessage], 
                         timestamp: serverTimestamp()
                     });
                     setChatId(newChatRef.id);
@@ -72,7 +94,6 @@ const ContextProvider = (props) => {
             setResultData("Error fetching response.");
         } finally {
             setLoading(false);
-            setInput("");
         }
     }
 
@@ -88,8 +109,8 @@ const ContextProvider = (props) => {
 
             if (chatSnap.exists()) {
                 const data = chatSnap.data();
-                setRecentPrompt(data.prompt);
-                setResultData(data.response);
+                setRecentPrompt(data.prompt); 
+                setMessages(data.messages || []);
             } else {
                 console.log("No such chat!");
             }
