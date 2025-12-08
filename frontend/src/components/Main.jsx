@@ -76,7 +76,7 @@ const Main = () => {
             <Skeleton count={1} width='70%' height={18}/>
         </div>
     );
-
+    
     return (
         <div className='main'>
             <div className="nav">

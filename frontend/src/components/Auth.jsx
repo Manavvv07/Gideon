@@ -1,10 +1,11 @@
 import './Style.css'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FcGoogle } from "react-icons/fc";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from '../config/firebase';
 import Spline from '@splinetool/react-spline';
 import { useNavigate } from 'react-router-dom';
+import { animate, svg, stagger } from 'animejs';
 
 const Auth = () => {
     const navigate = useNavigate();
@@ -13,6 +14,16 @@ const Auth = () => {
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
     const [error, setError] = useState("");
+
+    useEffect(() => {
+        animate(svg.createDrawable('.line'), {
+          draw: ['0 0', '0 1', '1 1'],
+          ease: 'inOutQuad',
+          duration: 3000,
+          delay: stagger(200),
+          loop: true
+        });
+    }, []);
 
     const handleAuth = async (e) => {
         e.preventDefault();
@@ -95,7 +106,19 @@ const Auth = () => {
                 </div>
             </div>
             <div className="spline-side">
-                <p className='name-auth'>Gideon</p>
+                <div className="name-auth-wrapper">
+                    <svg className="name-auth-svg" viewBox="0 0 600 150">
+                        <defs>
+                            <linearGradient id="titleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stopColor="#4b90ff" />
+                                <stop offset="100%" stopColor="#ff5446" />
+                            </linearGradient>
+                        </defs>
+                        <text x="50%" y="50%" textAnchor="middle" dy=".35em" className="line">
+                            Gideon
+                        </text>
+                    </svg>
+                </div>
                 <Spline className='spline-component' scene="https://prod.spline.design/q-ImWQ9oo-90QW1k/scene.splinecode" />
             </div>
         </div>

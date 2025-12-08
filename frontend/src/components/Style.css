@@ -76,8 +76,8 @@ body {
 
 .sidebar .new-chat-compact{
     display: block;
-    margin-left: 8px;
-    margin-top: 20px;
+    margin-left: 6px;
+    margin-top: 10px;
     border: none;
     cursor: pointer;
     font-size: 23px;
@@ -134,8 +134,7 @@ body {
     color: var(--text-primary);
     cursor: pointer;
     margin-bottom: 5px;
-    white-space: nowrap; 
-    overflow: hidden; 
+    
     text-overflow: ellipsis; 
 }
 
@@ -143,10 +142,17 @@ body {
     font-size: 20px;
     margin-top: 7px;
     color: var(--muted);
+    flex-shrink: 0;
 }
 
 .sidebar .recent-entry:hover{
     background-color: var(--sidebar-hover);
+}
+
+.sidebar .recent-entry p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .sidebar .bottom{
@@ -305,6 +311,7 @@ body {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); /* Added structure via shadow */
 }
 
 .main .cards{
@@ -463,8 +470,12 @@ body {
 .answer{
     font-size: 20px;
     color: var(--text-primary);
-    padding: 10px;
+    padding: 10px 30px  ;
     white-space: pre-wrap;
+}
+
+.answer p{
+    margin-bottom: 15px;
 }
 
 /* Auth Component Styles - Split Screen */
@@ -487,17 +498,26 @@ body {
     margin-top: -300px;
 }
 
-.spline-side .name-auth{
+.name-auth-wrapper {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 100px;
-    margin-top: 200px;
-    background: -webkit-linear-gradient(16deg, var(--accent), #ff5446);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    justify-content: center;
+    margin-top: 150px;
+    width: 100%;
+}
 
+.name-auth-svg {
+    width: 80%;
+    height: auto;
+    max-height: 150px;
+}
+
+.line {
+    font-size: 180px;
+    font-weight: bold;
+    fill: rgba(255, 255, 255, 0.08); 
+    stroke: url(#titleGradient);
+    stroke-width: 2px;
+    filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); 
 }
 
 .auth-side {
@@ -552,7 +572,7 @@ body {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); /* Added shadow for structure */
 }
 
 .form-content input {
