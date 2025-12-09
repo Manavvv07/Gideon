@@ -31,7 +31,7 @@ const ContextProvider = (props) => {
         setShowResult(true);
         
         const promptToSend = prompt !== undefined ? prompt : input;
-        setInput(""); // Clears input immediately
+        setInput(""); 
         setRecentPrompt(promptToSend);
 
         const userMessage = {role: 'user', text: promptToSend};
