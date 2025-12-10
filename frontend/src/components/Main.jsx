@@ -4,7 +4,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import { FaRegMessage, FaRegCompass, FaRegLightbulb, FaCode, FaMicrophone, FaRegCircleUser, FaGem } from "react-icons/fa6";
 import { IoMdSend } from "react-icons/io";
 import { GoFileMedia } from "react-icons/go";
-import { useContext, useEffect, useRef } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react'; 
 import Greeting from './Greeting';
 import Answer from './Answer';
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +16,7 @@ const Main = () => {
 
     const navigate = useNavigate();
     const messagesEndRef = useRef(null);
+    const [imgError, setImgError] = useState(false); 
     
     const { 
         onSent, 
@@ -43,6 +44,10 @@ const Main = () => {
     useEffect(() => {
         scrollToBottom();
     }, [messages, loading]);
+
+    useEffect(() => {
+        setImgError(false);
+    }, [user]);
 
     const handleLogout = async () => {
         try {
@@ -76,7 +81,9 @@ const Main = () => {
             <Skeleton count={1} width='70%' height={18}/>
         </div>
     );
-    
+
+    const userName = user?.displayName || user?.email?.split('@')[0] || "User";
+
     return (
         <div className='main'>
             <div className="nav">
@@ -88,10 +95,12 @@ const Main = () => {
                         <button className='login-main' onClick={() => navigate('/login')}>Login</button>
                     )}
                 
-                    {user && user.photoURL ? (
+                    {user && user.photoURL && !imgError ? (
                         <img 
                             src={user.photoURL} 
                             alt="User Icon" 
+                            onError={() => setImgError(true)} 
+                            referrerPolicy="no-referrer"      
                             style={{
                                 width: '40px', 
                                 height: '40px', 
@@ -108,15 +117,21 @@ const Main = () => {
             
             <div className="main-container">
                 {!showResult ? (
-                    <Greeting cardData={cardData} onCardClick={handleCardClick}/>
+                    <Greeting name={userName} cardData={cardData} onCardClick={handleCardClick}/>
                 ) : (
                     <div className='result'>
                         {messages.map((msg, index) => (
                             <div key={index} className="message-block">
                                 {msg.role === "user" ? (
                                     <div className="result-title">
-                                        {user?.photoURL ? (
-                                            <img src={user.photoURL} alt="" style={{width:'30px', borderRadius:'50%', marginRight:'10px', marginTop: '40px'}}/>
+                                        {user?.photoURL && !imgError ? (
+                                            <img 
+                                                src={user.photoURL} 
+                                                onError={() => setImgError(true)}
+                                                referrerPolicy="no-referrer"
+                                                alt="" 
+                                                style={{width:'30px', borderRadius:'50%', marginRight:'10px', marginTop: '40px'}}
+                                            />
                                         ) : (
                                             <FaRegCircleUser size={30} style={{marginRight:'10px', color: 'var(--text-primary)'}}/>
                                         )}

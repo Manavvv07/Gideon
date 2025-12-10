@@ -1,6 +1,6 @@
 :root{
   --bg: #ffffff; 
-  --surface: #f0f4f9; 
+  --surface: #e7ebf0; 
   --muted: #585858; 
   --text-primary: #000000; 
   --accent: #4b90ff;
@@ -311,7 +311,6 @@ body {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); /* Added structure via shadow */
 }
 
 .main .cards{
@@ -375,6 +374,8 @@ body {
     padding: 10px 20px;
     border-radius: 50px;
     width: 100%;
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.16);
+    transition: box-shadow 0.3s ease;
 }
 
 .search-box .prompt-icon{
@@ -490,7 +491,7 @@ body {
 .spline-side {
     flex: 0.8;
     height: 100%;
-    margin-top: 50px;
+    margin-top: 60px;
     position: relative;
 }
 
@@ -566,13 +567,13 @@ body {
 
 .form-content h2 {
     text-align: center;
+    font-size: 30px;
     color: var(--text-primary);
     margin-bottom: 25px;
     background: -webkit-linear-gradient(16deg, var(--accent), #ff5446);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); /* Added shadow for structure */
 }
 
 .form-content input {
