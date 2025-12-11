@@ -64,8 +64,8 @@ const Sidebar = () => {
             {extended ?<NewChat onClick={handleNewChat} />: (
             <NewChat compact onClick={handleCompactNew}/>
             )}
+            <div>{extended ? <p className="recent-title">Recent</p> : null}</div>
             <div className="recent">
-                {extended ? <p className="recent-title">Recent</p> : null}
                 {extended ? extended &&
                 recentChats.map(item => (
                 <RecentChats 
